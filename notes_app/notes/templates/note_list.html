@@ -1,0 +1,5 @@
+{% for note in notes %}
+    <p>
+        <a href="{{ author.get_absolute_url }}">{{ note.title }} {{ note.text }}</a>
+    </p>
+{% endfor %}

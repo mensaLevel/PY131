@@ -1,0 +1,3 @@
+<p>{{ note.title }} {{ note.text }} ({{ note.reminder|date:"Y-m-d" }}) {{ note.category }}</p>
+<a href="{% url 'note_update' note.pk %}">Редагувати</a>
+<a href="{% url 'note_delete' note.pk %}">Видалити</a>
