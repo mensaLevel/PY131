@@ -1,0 +1,5 @@
+<form method="post">
+    {% csrf_token %}
+    <p>Ви впевнені, що хочете видалити {{ note }}?</p>
+    <button type="submit">Так, видалити</button>
+</form>

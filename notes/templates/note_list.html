@@ -1,0 +1,19 @@
+{% load static %}
+<html>
+    <head>
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div>
+{% for note in notes %}
+    <p>
+        <a class="note" href="{{ author.get_absolute_url }}">{{ note.title }} {{ note.text }}</a>
+        <br/>
+        <br/>
+        
+
+    </p>
+{% endfor %}
+</div>
+</body>
+</html>
