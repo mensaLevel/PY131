@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static "css/styles.css" %}">
+    <title>My Notes App</title>
+</head>
+<body>
+<ul class="notes-list">
+    {% for note in notes %}
+    <li class="notes-element">
+        {% if note.reminder %}
+            <p>⏰ {{ note.reminder }}</p>
+        {% endif %}
+        <p class="note-title"><span>(❗{{ note.category.title }})</span> <strong>{{ note.title }}</strong></p>
+        <p class="note-content">{{ note.text }}</p>
+    </li>
+    {% endfor %}
+</ul>
+</body>
+</html>
