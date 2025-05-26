@@ -1,6 +1,7 @@
 import pytest
 import factory
 from django.utils import timezone
+from django.urls import reverse
 from .models import Category, Note
 from .forms import NoteForm
 
@@ -55,24 +56,30 @@ def test_create_note(category):
     assert Note.objects.count() - start_count == 1
     note.delete()
 
-@pytest.mark.django_db
-def test_update_note(category, note):
-    note.title = 'Updated Title'
-    note.text = 'Updated Text'
-    note.reminder = '2025-05-20'
-    category = 'Новина'
-    note.save()
-    assert note.title == 'Updated Title'
-    assert note.text == 'Updated Text'
-    assert note.reminder == '2025-05-20'
-    assert category == 'Новина'
 
 @pytest.mark.django_db
-def test_delete_note(category):
+def test_update_note(client, note):
+    updated_data = {
+        "title": "Updated Title",
+        "text": "Updated Text",
+        "reminder": "2025-05-20",
+    }
+    
+    url = reverse("note_update", args=[note.id])
+    response = client.post(url, updated_data)
+    
+    assert response.status_code == 200 
+    note.refresh_from_db()
+    assert note.title == "Updated Title"
+    assert note.text == "Updated Text"
+
+@pytest.mark.django_db
+def test_delete_note(client, category):
     note = Note.objects.create(title="To Be Deleted", text="Some text", reminder="2025-05-20", category=category)
-    note_id = note.id
-    note.delete()
-    assert not Note.objects.filter(id=note_id).exists()
+    url = reverse("note_delete", args=[note.id])
+    response = client.delete(url)
+    assert response.status_code == 204
+    assert not Note.objects.filter(id=note.id).exists() 
 
 @pytest.mark.django_db
 def test_view_note(note):

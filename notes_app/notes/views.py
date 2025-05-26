@@ -2,6 +2,11 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.generic import CreateView, DeleteView, UpdateView, ListView, DetailView
 from django.urls import reverse_lazy
+from django.views import View
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+
+
 
 from notes.forms import NoteForm
 from notes.models import Note
@@ -31,18 +36,34 @@ class NoteDetailView(DetailView):
     template_name = "note_detail.html"
 
 
-class NoteUpdateView(UpdateView):
-    model = Note
-    form_class = NoteForm
-    template_name = "note_form.html"
-    success_url = reverse_lazy("note_list")
+# class NoteUpdateView(UpdateView):
+#     model = Note
+#     form_class = NoteForm
+#     template_name = "note_form.html"
+#     success_url = reverse_lazy("note_list")
 
+class NoteUpdateView(View):
+    def post(self, request, pk):
+        note = get_object_or_404(Note, pk=pk)
+        data = request.POST
+        note.title = data.get("title", note.title)
+        note.text = data.get("text", note.text)
+        note.reminder = data.get("reminder", note.reminder)
+        note.save()
+        return JsonResponse({"status": "success", "title": note.title})
+
+# class NoteDeleteView(DeleteView):
+#     model = Note
+#     template_name = "note_confirm_delete.html"
+#     success_url = reverse_lazy("note_list")
 
 class NoteDeleteView(DeleteView):
     model = Note
-    template_name = "note_confirm_delete.html"
-    success_url = reverse_lazy("note_list")
 
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.delete()
+        return HttpResponse(status=204)  
 
 class NoteListView(ListView):
     model = Note
